@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Modern Warfare 3</title>
+  <style>
+    body {
+      font-family: "Roboto", "Segoe UI", Arial, sans-serif;
+      background: #181818;
+      color: #ffffff;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 24px;
+      line-height: 1.6;
+    }
+    h1, h2 { color: #ffffff; }
+    .card, .review, .media-block {
+      background: #242424;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .actions button {
+      margin-right: 10px;
+      background: #4ea3ff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .actions .wishlist { background: #444; }
+    .rating-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 0;
+      color: #d1d1d1;
+    }
+    .rating-table th,
+    .rating-table td {
+      border: 1px solid #383838;
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .rating-table th {
+      background: #1f1f1f;
+      color: #ffffff;
+    }
+    .rating-table td:last-child {
+      text-align: right;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .detail-panel {
+      background: #1f1f1f;
+      border: 1px solid #383838;
+      border-radius: 14px;
+      padding: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .detail-panel:hover {
+      background: #292929;
+      transform: translateY(-1px);
+    }
+    .detail-panel h3 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+    }
+    .detail-panel p {
+      margin: 0;
+      color: #c8c8c8;
+    }
+    .detail-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .detail-modal.active { display: flex; }
+    .detail-content {
+      background: #121212;
+      border-radius: 18px;
+      padding: 28px;
+      max-width: 840px;
+      width: 100%;
+      color: #ffffff;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      line-height: 1.7;
+    }
+    .detail-content h2 {
+      margin-top: 0;
+    }
+    .detail-content p {
+      margin: 16px 0;
+      color: #d1d1d1;
+    }
+    .review-summary {
+      background: #1b1b1b;
+      border: 1px solid #383838;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .review-summary p.review-summary-text {
+      margin: 12px 0 0;
+      color: #c8c8c8;
+    }
+    .star-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.1rem;
+      color: #ffd166;
+    }
+    .star-rating .rating-text {
+      margin-left: 10px;
+      font-size: 0.95rem;
+      color: #d1d1d1;
+    }
+    .expand-button {
+      margin-top: 14px;
+      background: #4ea3ff;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .review-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .review-list.active {
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    .review-item {
+      background: #1b1b1b;
+      border: 1px solid #2f2f2f;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .review-item p {
+      margin: 0 0 8px;
+      color: #e3e3e3;
+    }
+    .review-item span {
+      font-size: 0.95rem;
+      color: #aaaaaa;
+    }
+    .cart-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+      padding: 20px;
+    }
+    .cart-modal.active { display: flex; }
+    .cart-content {
+      background: #121212;
+      border-radius: 18px;
+      padding: 24px;
+      width: min(600px, 100%);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      color: #ffffff;
+    }
+    .cart-content h2 {
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .cart-item img {
+      width: 110px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .cart-item-info h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+    }
+    .cart-item-info p {
+      margin: 0 0 12px;
+      color: #d1d1d1;
+    }
+    .quantity-control {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .quantity-control button,
+    .recommended-nav button,
+    .cart-actions button {
+      background: #4ea3ff;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .quantity-control input {
+      width: 64px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #383838;
+      background: #181818;
+      color: #ffffff;
+      text-align: center;
+    }
+    .remove-item {
+      background: #666;
+    }
+    .cart-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #383838;
+      padding-top: 16px;
+      margin-top: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .cart-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .recommended {
+      margin-top: 24px;
+      background: #1f1f1f;
+      border: 1px solid #383838;
+      border-radius: 16px;
+      padding: 18px;
+    }
+    .recommended-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .recommended-track {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(220px, 1fr);
+      gap: 14px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding-bottom: 6px;
+    }
+    .recommended-card {
+      background: #242424;
+      border-radius: 16px;
+      padding: 12px;
+      min-width: 220px;
+      display: grid;
+      gap: 10px;
+    }
+    .recommended-card img {
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .recommended-card h3,
+    .recommended-card p {
+      margin: 0;
+    }
+    .recommended-card p {
+      color: #c8c8c8;
+      font-size: 0.94rem;
+    }
+    .recommended-card .rating {
+      color: #ffd166;
+      font-size: 0.96rem;
+    }
+    .recommended-card .price {
+      color: #4ea3ff;
+      font-weight: 700;
+    }
+    .recommended-card .tag {
+      display: inline-block;
+      background: #4ea3ff;
+      color: #121212;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      margin-top: 6px;
+    }
+    .recommended-nav button {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border-radius: 50%;
+    }
+    .recommended-track::-webkit-scrollbar {
+      height: 8px;
+    }
+    .recommended-track::-webkit-scrollbar-thumb {
+      background: #4ea3ff;
+      border-radius: 999px;
+    }
+    .recommended-track::-webkit-scrollbar-track {
+      background: #121212;
+    }
+    .cart-empty {
+      color: #d1d1d1;
+      margin-top: 12px;
+    }
+    .cart-actions .wishlist {
+      background: #444;
+    }
+    .cart-actions button:hover,
+    .quantity-control button:hover,
+    .recommended-nav button:hover {
+      opacity: 0.92;
+    }
+    .quantity-control button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .recommended-track {
+      scrollbar-width: thin;
+    }
+    .cart-item-info {
+      flex: 1;
+    }
+    .cart-item-info .quantity-control {
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+    .cart-item-info p.price {
+      color: #ffd166;
+      font-weight: 700;
+    }
+    .cart-item-info .remove-item {
+      background: #666;
+    }
+    .cart-actions {
+      justify-content: flex-end;
+    }
+    .cart-item-info .remove-item:hover {
+      opacity: 0.95;
+    }
+    .recommended-card button.add-recommended {
+      background: #4ea3ff;
+    }
+    .recommended-card .tag {
+      margin-top: 10px;
+    }
+    .cart-content .cart-summary {
+      border-color: #2e2e2e;
+    }
+    .cart-content .info-note {
+      color: #b0b0b0;
+      font-size: 0.95rem;
+      margin-top: 8px;
+    }
+    .cart-actions button:last-child {
+      background: #4a4a4a;
+    }
+    .recommended-card strong {
+      margin-top: 4px;
+      color: #ffffff;
+    }
+    .cart-content .cart-item img {
+      background: #181818;
+    }
+    .cart-content {
+      transform: translateY(-10px);
+      transition: transform 0.25s ease;
+    }
+    .cart-modal.active .cart-content {
+      transform: translateY(0);
+    }
+    .cart-empty {
+      display: none;
+    }
+    .cart-content .cart-item .status {
+      display: none;
+      margin-top: 8px;
+      color: #f55;
+      font-size: 0.9rem;
+    }
+    .cart-item.removed .status {
+      display: block;
+    }
+    .cart-item.removed {
+      opacity: 0.75;
+    }
+    .recommended-card .tag {
+      text-transform: uppercase;
+    }
+    .recommended-card .card-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .recommended-card .quick-add {
+      padding: 10px 12px;
+      width: 100%;
+    }
+    .recommended-card .price {
+      font-size: 0.98rem;
+    }
+    .recommended-card .rating {
+      opacity: 0.9;
+    }
+    .cart-actions button:first-child {
+      min-width: 150px;
+    }
+    .cart-item-info .quantity-control input {
+      min-width: 54px;
+    }
+    .recommended-track {
+      padding-bottom: 12px;
+    }
+    .recommended-nav button {
+      background: #242424;
+    }
+    .recommended-nav button:hover {
+      background: #2b2b2b;
+    }
+    .cart-actions button:last-child {
+      min-width: 126px;
+    }
+    .cart-actions {
+      flex-wrap: wrap;
+    }
+    .recommended-header {
+      flex-wrap: wrap;
+    }
+    .recommended-card .tag {
+      padding: 4px 10px;
+    }
+    .cart-item-info .remove-item {
+      min-width: 110px;
+    }
+    .recommended-card .rating {
+      display: block;
+      margin-top: 4px;
+    }
+    .recommended-card img {
+      min-height: 130px;
+    }
+    .recommended-card .tag {
+      font-size: 0.8rem;
+    }
+    .recommended-card .quick-add:hover {
+      opacity: 0.95;
+    }
+    .cart-content .cart-summary span {
+      font-size: 1.1rem;
+    }
+    .cart-content .info-note {
+      font-size: 0.94rem;
+    }
+    .recommended-card strong {
+      font-size: 1rem;
+    }
+    .recommended-card button {
+      font-size: 0.94rem;
+    }
+    .cart-content .cart-item-info .remove-item {
+      padding: 8px 12px;
+    }
+    .recommended-card button {
+      font-size: 0.94rem;
+    }
+    .cart-content .cart-summary {
+      border-top: 1px solid #2f2f2f;
+    }
+    .recommended-card .tag {
+      letter-spacing: 0.01em;
+    }
+    .cart-actions button:last-child {
+      color: #ffffff;
+    }
+    .recommended-card h3 {
+      font-size: 1rem;
+    }
+    .recommended-card p {
+      line-height: 1.4;
+    }
+    .recommended-card small {
+      color: #7a7a7a;
+    }
+    a { color: #4ea3ff; }
+  </style>
+</head>
+<body>
+  <h1>Order Modern Warfare 3</h1>
+  <p>Experience tactical combat and classic multiplayer action in this iconic shooter.</p>
+
+  <div class="detail-panel" onclick="toggleDetails()">
+    <h3>MW3 details</h3>
+    <p>Click to expand a full breakdown of the campaign, multiplayer, and action.</p>
+  </div>
+
+  <div class="detail-modal" id="detailModal" onclick="toggleDetails()">
+    <div class="detail-content" onclick="event.stopPropagation()">
+      <h2>MW3 in detail</h2>
+      <p>Modern Warfare 3 returns with fast-paced tactical gunplay, a cinematic single-player campaign, and iconic multiplayer maps. Experience responsive weapon handling, specialist equipment, co-op operations, and high-stakes team play.</p>
+      <p>Expect intense modern combat set pieces, balanced multiplayer progression, and a wide variety of modes built for both objective play and competitive action.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Price: $69.99</h2>
+    <p>Rated 4.4/5 for fast-paced missions and strong gunplay.</p>
+    <table class="rating-table">
+      <tr><th>Category</th><th>Rating</th></tr>
+      <tr><td>Gameplay</td><td>4.6 / 5</td></tr>
+      <tr><td>Graphics</td><td>4.5 / 5</td></tr>
+      <tr><td>Story</td><td>4.3 / 5</td></tr>
+      <tr><td>Replayability</td><td>4.7 / 5</td></tr>
+      <tr><td>Value</td><td>4.5 / 5</td></tr>
+    </table>
+    <div class="actions">
+      <button onclick="showCart()">Buy Now</button>
+      <button class="wishlist" onclick="addToWishlist()">Add to Wishlist</button>
+    </div>
+  </div>
+
+  <div class="cart-modal" id="cartModal" onclick="closeCart(event)">
+    <div class="cart-content" onclick="event.stopPropagation()">
+      <h2>Your Shopping Cart</h2>
+      <p class="info-note">Update quantities or remove items to see the total change instantly.</p>
+      <div class="cart-item" id="cartItem">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg3h4FVp1rEBX8Uv65oLVo592YHXdLTPnyiuAkgpB-Ag&s=10" alt="MW3 cover">
+        <div class="cart-item-info">
+          <h3>Modern Warfare 3</h3>
+          <p class="price">$69.99 each</p>
+          <div class="quantity-control">
+            <button type="button" onclick="changeQuantity(-1)">-</button>
+            <input type="number" id="cartQuantity" value="1" min="1" onchange="updateQuantityFromInput()">
+            <button type="button" onclick="changeQuantity(1)">+</button>
+            <button type="button" class="remove-item" onclick="removeItem()">Remove</button>
+          </div>
+          <span class="status" id="itemStatus"></span>
+        </div>
+      </div>
+      <div class="cart-summary">
+        <span>Total</span>
+        <span id="cartTotal">$69.99</span>
+      </div>
+      <div class="cart-actions">
+        <button onclick="checkout()">Proceed to Checkout</button>
+        <button class="wishlist" onclick="closeCart(event)">Continue Shopping</button>
+      </div>
+      <p class="cart-empty" id="cartEmpty">Your cart is empty. Add something to see the total.</p>
+    </div>
+  </div>
+
+  <div class="media-block">
+    <h2>Gallery</h2>
+    <div class="gallery-grid">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg3h4FVp1rEBX8Uv65oLVo592YHXdLTPnyiuAkgpB-Ag&s=10" alt="MW3 image 1" onclick="openModal(this.src)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkCPjjQLYj0tt-3fQmvAxZpMh97f_3e_hy7NHgpIIfUA&s=10" alt="MW3 image 2" onclick="openModal(this.src)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSuIEK7NtqqNUngliYL0okyNTNSjhrmRMCA7yPcEwxK4w&s=10" alt="MW3 image 3" onclick="openModal(this.src)">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwEHvjg27bx6UsOcpt345maqdQQxsz-sM1ZcEZIiILbQ&s=10" alt="MW3 image 4" onclick="openModal(this.src)">
+    </div>
+  </div>
+
+  <div class="review">
+    <h2>Customer Reviews</h2>
+    <div class="review-summary">
+      <div class="star-rating">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span>
+        <span class="rating-text">4.6 out of 5 based on 18 reviews</span>
+      </div>
+      <p class="review-summary-text">Tap to expand and scroll through player review excerpts for MW3.</p>
+      <button type="button" class="expand-button" data-review="mw3-reviews" onclick="toggleReviews('mw3-reviews')">Show reviews</button>
+    </div>
+    <div class="review-list" id="mw3-reviews">
+      <div class="review-item">
+        <p>“Great campaign and fun multiplayer. The missions feel cinematic and sharp.”</p>
+        <span>— Sam, Avalon</span>
+      </div>
+      <div class="review-item">
+        <p>“Classic gameplay with a modern feel. The loadouts are balanced and the maps are strong.”</p>
+        <span>— Jordan, Echo Base</span>
+      </div>
+      <div class="review-item">
+        <p>“I really enjoy the movement and gunplay; it feels tight and satisfying.”</p>
+        <span>— Priya, Shoreline</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="recommended">
+    <div class="recommended-header">
+      <div>
+        <h2>Recommended for you</h2>
+        <p class="recommendation-note">Scroll through picks that match your tactical shooter interests.</p>
+      </div>
+      <div class="recommended-nav">
+        <button type="button" onclick="scrollRecommended(-260)">&#8592;</button>
+        <button type="button" onclick="scrollRecommended(260)">&#8594;</button>
+      </div>
+    </div>
+    <div class="recommended-track" id="recommendedTrack">
+      <div class="recommended-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1234567/capsule_184x69.jpg" alt="Modern Warfare 2">
+        <h3>Modern Warfare 2</h3>
+        <p>Classic campaign and intense modern multiplayer with a strong competitive scene.</p>
+        <strong class="price">$49.99</strong>
+        <small class="rating">★★★★☆</small>
+        <span class="tag">Popular</span>
+      </div>
+      <div class="recommended-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/7654321/capsule_184x69.jpg" alt="Battlefield 6">
+        <h3>Battlefield 6</h3>
+        <p>Large-scale military combat with destructible environments.</p>
+        <strong class="price">$59.99</strong>
+        <small class="rating">★★★★☆</small>
+        <span class="tag">Recommended</span>
+      </div>
+      <div class="recommended-card">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/9876543/capsule_184x69.jpg" alt="GTA 5">
+        <h3>GTA 5</h3>
+        <p>Open-world crime sandbox with dramatic heists and replayable missions.</p>
+        <strong class="price">$29.99</strong>
+        <small class="rating">★★★★☆</small>
+        <span class="tag">Best Seller</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="imageModal" onclick="closeModal()">
+    <img id="modalImage" src="" alt="Expanded preview">
+  </div>
+
+  <p><a href="index.html">Back to games</a></p>
+  <script>
+    const cartItem = {
+      name: 'Modern Warfare 3',
+      price: 69.99,
+      quantity: 1,
+      image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg3h4FVp1rEBX8Uv65oLVo592YHXdLTPnyiuAkgpB-Ag&s=10'
+    };
+
+    function openModal(src) {
+      document.getElementById('modalImage').src = src;
+      document.getElementById('imageModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('imageModal').classList.remove('active');
+    }
+
+    function toggleDetails() {
+      document.getElementById('detailModal').classList.toggle('active');
+    }
+
+    function toggleReviews(id) {
+      const el = document.getElementById(id);
+      const button = document.querySelector('button[data-review="' + id + '"]');
+      if (!el) return;
+      const active = el.classList.toggle('active');
+      if (button) button.textContent = active ? 'Hide reviews' : 'Show reviews';
+    }
+
+    function formatPrice(amount) {
+      return '$' + amount.toFixed(2);
+    }
+
+    function showCart() {
+      document.getElementById('cartModal').classList.add('active');
+      updateCartDisplay();
+    }
+
+    function closeCart(event) {
+      if (event) event.stopPropagation();
+      document.getElementById('cartModal').classList.remove('active');
+    }
+
+    function addToWishlist() {
+      showCart();
+      const status = document.getElementById('itemStatus');
+      status.textContent = 'Added to wishlist';
+      status.style.color = '#72d66b';
+      updateCartDisplay();
+    }
+
+    function updateCartDisplay() {
+      const quantityInput = document.getElementById('cartQuantity');
+      quantityInput.value = cartItem.quantity;
+      document.getElementById('cartTotal').textContent = formatPrice(cartItem.price * cartItem.quantity);
+      document.getElementById('cartEmpty').style.display = cartItem.quantity === 0 ? 'block' : 'none';
+      document.getElementById('cartItem').style.display = cartItem.quantity === 0 ? 'none' : 'flex';
+      if (cartItem.quantity === 0) {
+        document.getElementById('itemStatus').textContent = 'Removed from cart';
+      }
+    }
+
+    function changeQuantity(delta) {
+      cartItem.quantity = Math.max(0, cartItem.quantity + delta);
+      updateCartDisplay();
+    }
+
+    function updateQuantityFromInput() {
+      const quantityInput = document.getElementById('cartQuantity');
+      let value = parseInt(quantityInput.value, 10);
+      if (Number.isNaN(value) || value < 0) value = 0;
+      cartItem.quantity = value;
+      updateCartDisplay();
+    }
+
+    function removeItem() {
+      cartItem.quantity = 0;
+      updateCartDisplay();
+    }
+
+    function checkout() {
+      alert('Checkout not available in this demo. Total: ' + formatPrice(cartItem.price * cartItem.quantity));
+    }
+
+    function scrollRecommended(offset) {
+      const track = document.getElementById('recommendedTrack');
+      track.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
